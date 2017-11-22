@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>触摸屏</title>
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+	<style>
+		html,body,ul{
+			margin: 0;
+			padding: 0;
+		}
+		html,body{
+			width: 100%;
+			height: 100%;
+		}
+		.carousel{
+			width: 100%;
+			overflow: hidden;
+		}
+        
+        ul{
+        	position: relative;
+        	width: 1000%;
+        	list-style: none;
+        	overflow: hidden;
+        }
+        li{
+        	float: left;
+        	width: 10%;
+        }
+        a{
+        	display: block;
+        	width: 100%;
+        }
+        img{
+        	width: 100%;
+        	vertical-align: middle;
+        }
+
+	</style>
+</head>
+<body>
+	<div class="carousel">
+		<ul>
+			<li><a href="javascript:;"><img src="./images/0.png" alt=""></a></li>
+			<li><a href="javascript:;"><img src="./images/1.png" alt=""></a></li>
+			<li><a href="javascript:;"><img src="./images/2.png" alt=""></a></li>
+			<li><a href="javascript:;"><img src="./images/3.png" alt=""></a></li>
+			<li><a href="javascript:;"><img src="./images/4.png" alt=""></a></li>
+			<li><a href="javascript:;"><img src="./images/5.png" alt=""></a></li>
+			<li><a href="javascript:;"><img src="./images/6.png" alt=""></a></li>
+			<li><a href="javascript:;"><img src="./images/7.png" alt=""></a></li>
+			
+		</ul>
+	</div>
+	<script>
+	   // 步骤:
+       // 获取元素 ul .carousel 第一个li 最后一个li
+	   var carousel =document.querySelector(".carousel");
+	   var ul=document.querySelector("ul");
+	   var firstLi=document.querySelector("li:first-child");
+	   var lastLi=document.querySelector("li:last-child");
+	   var locke=true;
+	   
+       
+
+       var carouselWidth,aLi,index=0, timer;
+	   // 把第一个li添加到最后一个li的后面 把最后一个li添加到第一个li的前面
+	   function init(){
+          ul.appendChild(firstLi.cloneNode(true));
+          ul.insertBefore(lastLi.cloneNode(true),firstLi);
+          
+          aLi=document.querySelectorAll("li");//10
+
+          setWidth();
+
+          // 修正第一个显示的图片
+          index--;
+          ul.style.left=carouselWidth * index + 'px';
+          // 让轮播图动起来
+          autoPlay();
+
+	   }
+       
+       init();
+       // 设置ul和li的宽度
+       function setWidth(){
+           carouselWidth= carousel.offsetWidth;
+
+           // 设置ul的宽度
+           ul.style.width=carouselWidth*aLi.length+'px';
+           for(var i=0;i<aLi.length;i++){
+           	aLi[i].style.width=carouselWidth + 'px';
+           }
+       }
+       // 让轮播图动起来
+       function autoPlay(){
+       	timer=setInterval(function(){
+            index--;
+            ul.style.left=carouselWidth * index + 'px';
+            ul.style.transition='all 1s';
+       	},1500);
+       }
+       // 检测索引的值然后重置索引(动的时候去检测--过度的时候--transitionEnd)
+       ul.addEventListener('webkitTransitionEnd', function(){
+       	locked = true;
+       	//判断索引值
+       	console.log(index);
+       	if(index ==  0) {
+        index = -8;
+       }
+       	if(index==-9){
+       		index=-1;
+       	}
+       	ul.style.left=carouselWidth * index + 'px';
+        ul.style.transition='';
+       })
+
+       // 让手指去控制轮播图的方向
+       ul.addEventListener('touchstart',function(e){
+       	clearInterval(timer);
+             var touches=e.targetTouches[0];
+             startX=touches.clinentX;
+       })
+       ul.addEventListener('touchend',function(e){
+       	autoPlay();
+       	if(locked==false) return;
+       	locked=false;
+       	
+             var touches=e.changedTouches[0];
+             endX=touches.clinentX;
+
+             if(endX>startX){
+             	index++;
+             }else{
+             	index--;
+             }
+             ul.style.left=carouselWidth * index + 'px';
+             ul.style.transition='all 1s';
+       })
+// 当浏览器最小化之后 webkitTransitionEnd事件会失效
+	</script>
+</body>
+</html>
